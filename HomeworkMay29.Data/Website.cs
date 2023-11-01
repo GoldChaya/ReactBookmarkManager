@@ -13,8 +13,7 @@ namespace HomeworkMay29.Data
         public string Title { get; set; }
         public string Url { get; set; }
         public int UserId { get; set; }
-
         [JsonIgnore]
-        public int Liked { get; set; }
+        public User User { get; set; }
     }
 }

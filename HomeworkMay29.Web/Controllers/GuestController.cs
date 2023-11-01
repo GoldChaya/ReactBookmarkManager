@@ -1,6 +1,7 @@
 ﻿using HomeworkMay29.Data;
 using HomeworkMay29.Web.ViewModels;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -43,13 +44,12 @@ namespace HomeworkMay29.Web.Controllers
             return user;
         }
 
-
         [HttpGet]
-        [Route("gettopfivebookmarks")]
-        public List<Website> GetTopFiveBookmarks()
+        [Route("gettopbookmarks")]
+        public List<TopWebsites> GetTopBookmarks()
         {
             var repo = new GuestRepository(_connectionString);
-            return repo.GetTopFiveBookmarks();
+            return repo.GetTopBookmarks();
         }
 
 

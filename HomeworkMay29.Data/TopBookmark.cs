@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace HomeworkMay29.Data
 {
-    public class UserRepository
+    public class TopWebsites
     {
-
+        public string URL { get; set; }
+        public int Count { get; set; }
     }
 }

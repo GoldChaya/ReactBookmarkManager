@@ -9,8 +9,8 @@ namespace HomeworkMay29.Data
         public string LastName { get; set; }
         public string Email { get; set; }
         public List<Website> Websites { get; set; }
-        [JsonIgnore]
 
+        [JsonIgnore]
         public string PasswordHash { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,31 +16,54 @@ namespace HomeworkMay29.Data
         {
             _connectionString = connectionString;
         }
-
-        public List<Website> GetTopFiveBookmarks()
+        public List<TopWebsites> GetTopBookmarks()
         {
             using var context = new WebsiteContext(_connectionString);
-            if (context.Websites != null)
+            var websites = context.Websites.ToList();
+            var dictionary = new Dictionary<string, int>();
+            foreach (var website in websites)
             {
-                var bookmarks = context.Websites.FromSqlRaw("SELECT TOP 5 Url, COUNT(*) as liked FROM websites " +
-                                                 "GROUP BY Url " +
-                                                 "ORDER BY liked DESC"
-                                                 )
-
-                .Select(b => new Website
+                if (dictionary.ContainsKey(website.Url))
                 {
-                    Url = b.Url,
-                    Liked = (int)b.Liked
-                }).ToList();
-
-                return bookmarks;
-
+                    dictionary[website.Url]++;
+                }
+                else
+                {
+                    dictionary[website.Url] = 1;
+                }
             }
-            else
+
+
+            return dictionary.OrderByDescending(k => k.Value).Take(2).Select(kvp => new TopWebsites
             {
-                return new List<Website>();
-            }
+                URL = kvp.Key,
+                Count = kvp.Value
+            }).ToList();
         }
+        //public List<Website> GetTopBookmarks()
+        //{
+        //    using var context = new WebsiteContext(_connectionString);
+        //    if (context.Websites != null)
+        //    {
+        //        var bookmarks = context.Websites.FromSqlRaw("SELECT TOP 2 Url, COUNT(*) as liked FROM websites " +
+        //                                         "GROUP BY Url " +
+        //                                         "ORDER BY liked DESC"
+        //                                         )
+
+        //        .Select(w => new TopBookmark
+        //        {
+        //            URL = w.Url,
+        //            Count = (int)w.count
+        //        }).ToList();
+
+        //        return bookmarks;
+
+        //    }
+        //    else
+        //    {
+        //        return new List<Website>();
+        //    }
+        //}
 
 
         public void AddUser(User user, string password)
@@ -66,13 +90,38 @@ namespace HomeworkMay29.Data
             }
 
             return user;
-
         }
-
-        public User GetByEmail(string email)
+            public User GetByEmail(string email)
         {
             using var ctx = new WebsiteContext(_connectionString);
             return ctx.Users.FirstOrDefault(u => u.Email == email);
+        }
+        public void AddWebsite(Website website)
+        {
+            using var context = new WebsiteContext(_connectionString);
+            context.Websites.Add(website);
+            context.SaveChanges();
+        }
+        public List<Website> GetBookmarksById(int id)
+        {
+            using var context = new WebsiteContext(_connectionString);
+            return context.Websites.Where(b => b.UserId == id).ToList();
+        }
+
+
+        public void UpdateBookmarkTitle(string title, int id)
+        {
+            using var context = new WebsiteContext(_connectionString);
+            context.Database.ExecuteSqlInterpolated($"UPDATE Websites SET title={title} WHERE id={id}");
+            context.SaveChanges();
+
+        }
+
+        public void DeleteBookmark(int id)
+        {
+            using var context = new WebsiteContext(_connectionString);
+            context.Database.ExecuteSqlInterpolated($"DELETE FROM Websites WHERE Id={id}");
+
         }
     }
 }

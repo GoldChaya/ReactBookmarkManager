@@ -1,51 +1,43 @@
-const Home = () =>{
-    return(
-    <div>
-                        <h1>Welcome to the React Bookmark Application.</h1>
-                        <h3>Top 4 most bookmarked links</h3>
-                        <table className="table table-hover table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Url</th>
-                                    <th>Count</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+
+    const Home = () => {
+        
+        const [topBookmarks, setTopBookmarks] = useState([]);
+
+        useEffect(() => {
+            const getTopBookmarks = async () => {
+                const { data } = await axios.get('/api/guest/getTopBookmarks');
+                setTopBookmarks(data);
+            }
+    
+            getTopBookmarks();
+        }, []);
+    return (
+        <div>
+            <h1>Welcome to the React Bookmark Application.</h1>
+            <h3>Top 2 most bookmarked links</h3>
+            <table className="table table-hover table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Url</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {topBookmarks.map((b) =>
+                            <tr
+                                key={b.id}>
                                     <td>
-                                        <a href="https://stackoverflow.com" target="_blank">
-                                            https://stackoverflow.com
-                                        </a>
+                                        <a href={b.url} target="_blank"> {b.url} </a>
                                     </td>
-                                    <td>14</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <a href="https://lakewoodprogramming.com" target="_blank">
-                                            https://lakewoodprogramming.com
-                                        </a>
-                                    </td>
-                                    <td>13</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <a href="https://microsoft.com" target="_blank">
-                                            https://microsoft.com
-                                        </a>
-                                    </td>
-                                    <td>12</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <a href="https://www.npmjs.com/" target="_blank">
-                                            https://www.npmjs.com/
-                                        </a>
-                                    </td>
-                                    <td>11</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-    )
+                                    <td>{b.count}</td>
+                            </tr>
+                        )}
+                </tbody>
+            </table>
+        </div>
+    );
 }
 export default Home;
